@@ -69,4 +69,48 @@ if (!function_exists('buildExtendCategoryKeyboard')) {
         return $keyboardRows;
     }
 }
+// ---- Compatibility wrapper: some codebases call update_fields(...) instead of update(...).
+// It supports both signatures:
+//   update_fields($table, ['col'=>val, ...], $whereField, $whereValue)
+//   update_fields($table, $field, $value, $whereField, $whereValue)
+if (!function_exists('update_fields')) {
+    function update_fields(...$args)
+    {
+        if (!function_exists('update')) {
+            // No underlying update() available.
+            return false;
+        }
 
+        $argc = count($args);
+        if ($argc === 0) {
+            return false;
+        }
+
+        $table = $args[0] ?? null;
+
+        // Signature A: (table, array fields, whereField?, whereValue?)
+        if ($argc >= 2 && is_array($args[1])) {
+            $fields = $args[1];
+            $whereField = $args[2] ?? null;
+            $whereValue = $args[3] ?? null;
+
+            foreach ($fields as $field => $value) {
+                update($table, $field, $value, $whereField, $whereValue);
+            }
+            return true;
+        }
+
+        // Signature B: (table, field, value, whereField?, whereValue?)
+        if ($argc >= 3) {
+            $field = $args[1];
+            $value = $args[2];
+            $whereField = $args[3] ?? null;
+            $whereValue = $args[4] ?? null;
+
+            update($table, $field, $value, $whereField, $whereValue);
+            return true;
+        }
+
+        return false;
+    }
+}
