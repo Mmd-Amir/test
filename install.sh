@@ -9,7 +9,7 @@
 #   B) /install.sh + /Refactorinstall/install_parts/*.sh   (your current layout)
 #
 # You can override where parts are fetched from:
-#   export test="https://raw.githubusercontent.com/<USER>/<REPO>/<BRANCH>/Refactorinstall/install_parts"
+#   export mmdam="https://raw.githubusercontent.com/<USER>/<REPO>/<BRANCH>/Refactorinstall/install_parts"
 #
 set -u
 
@@ -22,7 +22,7 @@ LOG_FILE="${LOG_FILE:-/var/log/mirza_installer.log}"
 
 # When running via curl|bash, we download parts from GitHub raw.
 # We try multiple base paths to avoid 404 if you keep parts under Refactorinstall/.
-test="${test:-}"
+mmdam="${mmdam:-}"
 MIRZA_INSTALLER_RAW_INSTALL_URL="${MIRZA_INSTALLER_RAW_INSTALL_URL:-https://raw.githubusercontent.com/Mmd-Amir/mirza_pro/main/install.sh}"
 
 # ---------- logging ----------
@@ -52,7 +52,7 @@ if [[ -n "${BASH_SOURCE[0]:-}" && -f "${BASH_SOURCE[0]}" ]]; then
   fi
 fi
 
-# Candidate raw bases (used only if local parts are not available and test isn't set)
+# Candidate raw bases (used only if local parts are not available and mmdam isn't set)
 _default_bases=(
   "https://raw.githubusercontent.com/Mmd-Amir/mirza_pro/main/install_parts"
   "https://raw.githubusercontent.com/Mmd-Amir/mirza_pro/main/Refactorinstall/install_parts"
@@ -80,8 +80,8 @@ source_part() {
 
   # 3) download
   local bases=()
-  if [[ -n "$test" ]]; then
-    bases=("$test")
+  if [[ -n "$mmdam" ]]; then
+    bases=("$mmdam")
   else
     bases=("${_default_bases[@]}")
   fi
@@ -99,7 +99,7 @@ source_part() {
   if [[ $ok -ne 1 ]]; then
     echo -e "\033[31m[ERROR]\033[0m Failed to download: $last_url"
     echo -e "\033[33m[HINT]\033[0m If your repo uses Refactorinstall/, set:"
-    echo "  export test="https://raw.githubusercontent.com/Mmd-Amir/mirza_pro/main/Refactorinstall/install_parts""
+    echo "  export mmdam="https://raw.githubusercontent.com/Mmd-Amir/mirza_pro/main/Refactorinstall/install_parts""
     return 1
   fi
 
