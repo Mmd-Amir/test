@@ -26,7 +26,16 @@ if (function_exists('rf_set_module')) {
             $UsernameData['subscription_url'] = $Get_Data_Panel['url_panel'] . "/" . ltrim($UsernameData['subscription_url'], "/");
         }
         if ($new_marzban) {
-            $UsernameData['expire'] = strtotime($UsernameData['expire']);
+            // PHP 8.1+: avoid passing null to strtotime() (deprecated). Keep legacy behavior (false) when empty.
+            $expireRaw = $UsernameData['expire'] ?? null;
+            if ($expireRaw === null || $expireRaw === '' ) {
+                $UsernameData['expire'] = false;
+            } elseif (is_numeric($expireRaw)) {
+                $UsernameData['expire'] = (int)$expireRaw;
+            } else {
+                $t = strtotime((string)$expireRaw);
+                $UsernameData['expire'] = ($t === false) ? false : $t;
+            }
             $UsernameData['links'] = base64_decode(outputlunk($UsernameData['subscription_url']));
             $UsernameData['links'] = explode("\n", $UsernameData['links']);
             $sublist_update = get_list_update($name_panel, $username);
