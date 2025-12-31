@@ -2,8 +2,6 @@
 require_once '../config.php';
 require_once '../function.php';
 require_once '../botapi.php';
-$textbotlang = languagechange('text.json');
-
 require_once '../panels.php';
 require_once '../jdf.php';
 require_once '../keyboard.php';
