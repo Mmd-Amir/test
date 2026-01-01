@@ -202,7 +202,7 @@ function updatepear($namepanel,array $config){
     );
     $req = new CurlRequest($url);
     $req->setHeaders($headers);
-    $response = $req->post($configpanel);
+    $response = $req->post($config);
     return $response;
 }
 function deletejob($namepanel,array $config){
