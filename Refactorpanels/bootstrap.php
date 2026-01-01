@@ -13,9 +13,10 @@ if (!defined('RF_APP_ROOT')) {
 @chdir(RF_APP_ROOT);
 
 // Send PHP internal errors to a file under RF_LOG_DIR (if present)
-if (defined('RF_LOG_DIR')) {
-    @ini_set('error_log', RF_LOG_DIR . '/php_error.log');
-}
+// Or use the hard-coded PANELS_DEBUG.log if we want to be sure.
+$panelsDebugFile = RF_APP_ROOT . '/PANELS_DEBUG.log';
+ini_set('log_errors', 1);
+ini_set('error_log', $panelsDebugFile);
 
 require_once RF_APP_ROOT . '/config.php';
 require_once RF_APP_ROOT . '/Marzban.php';
