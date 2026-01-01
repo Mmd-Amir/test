@@ -184,6 +184,9 @@ class ManagePanel
             $statement = $pdo->prepare("SELECT * FROM manualsell WHERE codepanel = :code_panel AND status = 'active' AND codeproduct = :code_product ORDER BY RAND() LIMIT 1");
             $statement->execute(array(':code_panel' => $Get_Data_Panel['code_panel'], ':code_product' => $code_product));
             $configman = $statement->fetch(PDO::FETCH_ASSOC);
+            if (!$configman) {
+                return array('status' => 'Unsuccessful', 'msg' => 'No active manual sale found for this product.');
+            }
             $Output['status'] = 'successful';
             $Output['username'] = $usernameC;
             $Output['subscription_url'] = $configman['contentrecord'];
@@ -341,6 +344,24 @@ class ManagePanel
             $Output = array(
                 'status' => $status, 'username' => $user_data['email'], 'data_limit' => $user_data['total'], 'expire' => $expire, 'online_at' => $user_data['lastOnline'] == 0 ? "offline" : date('Y-m-d H:i:s', $user_data['lastOnline'] / 1000),
                 'used_traffic' => $user_data['up'] + $user_data['down'], 'links' => $links_user, 'subscription_url' => $subUrl, 'sub_updated_at' => null, 'sub_last_user_agent' => null
+            );
+        } elseif ($Get_Data_Panel['type'] == "alireza_single") {
+            $user_data = get_clinetsalireza($username, $Get_Data_Panel['name_panel'])[0] ?? null;
+            if (!$user_data) return array('status' => 'Unsuccessful', 'msg' => "User not found");
+            $expire = ($user_data['expiryTime'] ?? 0) / 1000;
+            $status = ($user_data['enable'] ?? false) ? "active" : "disabled";
+            $up = $user_data['up'] ?? 0;
+            $down = $user_data['down'] ?? 0;
+            $total = $user_data['total'] ?? 0;
+            if ($total != 0 && ($total - ($up + $down) <= 0)) $status = "limited";
+            if ($expire != 0 && ($expire - time() <= 0)) $status = "expired";
+            $subUrl = $Get_Data_Panel['linksubx'] . "/" . ($user_data['subId'] ?? '');
+            $links_raw = outputlunk($subUrl);
+            $links_user = array_values(array_filter(array_map('trim', explode("\n", isBase64($links_raw) ? base64_decode($links_raw) : $links_raw))));
+            if ($inoice != false) $subUrl = "https://$domainhosts/sub/" . $inoice['id_invoice'];
+            $Output = array(
+                'status' => $status, 'username' => $user_data['email'] ?? $username, 'data_limit' => $total, 'expire' => $expire, 'online_at' => get_onlineclialireza($Get_Data_Panel['name_panel'], $username),
+                'used_traffic' => $up + $down, 'links' => $links_user, 'subscription_url' => $subUrl, 'sub_updated_at' => null, 'sub_last_user_agent' => null
             );
         } elseif ($Get_Data_Panel['type'] == "hiddify") {
             $UsernameData = getdatauser($username, $Get_Data_Panel['name_panel']);
