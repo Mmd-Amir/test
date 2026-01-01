@@ -39,13 +39,13 @@ if ($rf_admin_handled) return;
 require_once __DIR__ . '/routes/00_admin__admin_backadmin__hide_mini_app_instruction.php';
 if ($rf_admin_handled) return;
 
-require_once __DIR__ . '/routes/01_stat_all_bot__close_stat__hoursago_stat.php';
+require_once __DIR__ . '/routes/01_stats.php';
 if ($rf_admin_handled) return;
 
 require_once __DIR__ . '/routes/02_month_current_stat__view_stat_time__step_get_time_start.php';
 if ($rf_admin_handled) return;
 
-require_once __DIR__ . '/routes/03_typeservice__typeusermessage__typeagent.php';
+require_once __DIR__ . '/routes/03_types.php';
 if ($rf_admin_handled) return;
 
 require_once __DIR__ . '/routes/04_startaction__cancel_sendmessage__step_changetextstart.php';
@@ -54,7 +54,7 @@ if ($rf_admin_handled) return;
 require_once __DIR__ . '/routes/05_step_text_discount__step_text_add_balance__step_text_sell.php';
 if ($rf_admin_handled) return;
 
-require_once __DIR__ . '/routes/06_sendmessageuser__step_sendmessagetext__step_sendmessagetid.php';
+require_once __DIR__ . '/routes/06_messaging.php';
 if ($rf_admin_handled) return;
 
 require_once __DIR__ . '/routes/07_step_text_roll.php';
@@ -63,7 +63,7 @@ if ($rf_admin_handled) return;
 require_once __DIR__ . '/routes/settings/02_toggle_status_and_cron_callbacks.php';
 if ($rf_admin_handled) return;
 
-require_once __DIR__ . '/routes/08_step_addchannelid__step_get_limit__step_get_agent.php';
+require_once __DIR__ . '/routes/08_limits.php';
 if ($rf_admin_handled) return;
 
 require_once __DIR__ . '/routes/09_reject_pay__step_reject-dec__step_selectloc.php';
@@ -81,7 +81,7 @@ if ($rf_admin_handled) return;
 require_once __DIR__ . '/routes/13_step_getpaawordnew__step_confirmremovepanel__backlistuser.php';
 if ($rf_admin_handled) return;
 
-require_once __DIR__ . '/routes/14_balanceuserlist__next_pageuserbalance__previous_pageuserbalance.php';
+require_once __DIR__ . '/routes/14_balance.php';
 if ($rf_admin_handled) return;
 
 require_once __DIR__ . '/routes/15_step_adddecriptionblock__acceptblock__verify.php';
@@ -132,7 +132,7 @@ if ($rf_admin_handled) return;
 require_once __DIR__ . '/routes/30_step_getonelotary3__gradonhshans__step_getpricewheel.php';
 if ($rf_admin_handled) return;
 
-require_once __DIR__ . '/routes/31_vieworderuser__next_pageinvoice__previous_pageinvoice.php';
+require_once __DIR__ . '/routes/31_orders.php';
 if ($rf_admin_handled) return;
 
 require_once __DIR__ . '/routes/32_step_getpricevolumesrc__settimepricesrc__step_getpricetimesrc.php';

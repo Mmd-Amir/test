@@ -32,9 +32,9 @@ require_once __DIR__ . '/modules/01_admin_menus_and_gateways.php';
 require_once __DIR__ . '/modules/02_shop_and_navigation_keyboards.php';
 require_once __DIR__ . '/modules/03_lists_panels_channels_help.php';
 require_once __DIR__ . '/modules/04_textbot_products_payments_lists.php';
-require_once __DIR__ . '/modules/05_panel_options_support_affiliates_payment_settings.php';
+require_once __DIR__ . '/modules/05_panel_settings.php';
 require_once __DIR__ . '/modules/06_departments_lottery_wheel_links.php';
-require_once __DIR__ . '/modules/07_dynamic_keyboard_builders_products_categories.php';
+require_once __DIR__ . '/modules/07_builders.php';
 require_once __DIR__ . '/modules/08_stars_limits_nowpayments_stats.php';
 
 // End.

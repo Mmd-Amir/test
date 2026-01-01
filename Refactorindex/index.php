@@ -7,21 +7,21 @@
 require_once __DIR__ . '/bootstrap.php';
 
 // === Initialization & guards ===
-require_once __DIR__ . '/parts/init_guard_settings_user.php';
-require_once __DIR__ . '/parts/prechecks_antispam_affiliate_rules_channels.php';
+require_once __DIR__ . '/parts/init.php';
+require_once __DIR__ . '/parts/precheck.php';
 
 // === Main router chains (extracted from huge elseif chains) ===
 
 // Chain 1: User core routes (start/back, services list, product info, extend, transfer, ...)
 $rf_chain1_handled = false;
-require_once __DIR__ . '/routes/user/01_start_back_phone_services.php';
-require_once __DIR__ . '/routes/user/02_service_details_and_search.php';
-require_once __DIR__ . '/routes/user/03_subscription_qrcode.php';
-require_once __DIR__ . '/routes/user/04_extend_category_select.php';
-require_once __DIR__ . '/routes/user/05_extend_confirm.php';
-require_once __DIR__ . '/routes/user/06_extra_volume_confirm.php';
-require_once __DIR__ . '/routes/user/07_disorder_report_confirm.php';
-require_once __DIR__ . '/routes/user/08_transfer_and_usertest_entry.php';
+require_once __DIR__ . '/routes/user/01_start.php';
+require_once __DIR__ . '/routes/user/02_details.php';
+require_once __DIR__ . '/routes/user/03_qrcode.php';
+require_once __DIR__ . '/routes/user/04_extend.php';
+require_once __DIR__ . '/routes/user/05_extend_conf.php';
+require_once __DIR__ . '/routes/user/06_volume.php';
+require_once __DIR__ . '/routes/user/07_report.php';
+require_once __DIR__ . '/routes/user/08_transfer.php';
 unset($rf_chain1_handled);
 
 // Chain 2: UserTest + Wallet + Buy flow + Payment step selector
@@ -51,4 +51,4 @@ require_once __DIR__ . '/routes/telegram/01_precheckout_stars_and_extend.php';
 unset($rf_chain5_handled);
 
 // === Admin + shutdown (admin include + closing DB connections) ===
-require_once __DIR__ . '/parts/shutdown_admin_db.php';
+require_once __DIR__ . '/parts/shutdown.php';

@@ -144,104 +144,52 @@ if (!is_array($user)) {
 } else {
     $user['codeInvitation'] = ensureUserInvitationCode($from_id, $user['codeInvitation'] ?? null);
 }
-$admin_ids = select("admin", "id_admin", null, null, "FETCH_COLUMN", ['cache' => false]);
+$admin_ids = select("admin", "id_admin", null, null, "FETCH_COLUMN", ['cache' => true]);
 if (!is_array($admin_ids)) {
     $admin_ids = [];
 }
-$helpdata = select("help", "*");
-$datatextbotget = select("textbot", "*", null, null, "fetchAll");
-$id_invoice = select("invoice", "id_invoice", null, null, "FETCH_COLUMN");
-$usernameinvoice = select("invoice", "username", null, null, "FETCH_COLUMN");
-$code_Discount = select("Discount", "code", null, null, "FETCH_COLUMN");
-$marzban_list = select("marzban_panel", "name_panel", null, null, "FETCH_COLUMN");
-$name_product = select("product", "name_product", null, null, "FETCH_COLUMN");
-$SellDiscount = select("DiscountSell", "codeDiscount", null, null, "FETCH_COLUMN");
-$channels_id = select("channels", "link", null, null, "FETCH_COLUMN");
-$pricepayment = select("Payment_report", "price", null, null, "FETCH_COLUMN");
-$listcard = select("card_number", "cardnumber", null, null, "FETCH_COLUMN");
-$datatxtbot = array();
-$topic_id = select("topicid", "*", null, null, "fetchAll");
+
+// Optimization: Removed heavy selects for all invoice IDs, usernames, etc.
+// These are only needed in specific admin routes, not on every bot start.
+
+$marzban_list = select("marzban_panel", "name_panel", null, null, "FETCH_COLUMN", ['cache' => true]);
+$name_product = select("product", "name_product", null, null, "FETCH_COLUMN", ['cache' => true]);
+$channels_id = select("channels", "link", null, null, "FETCH_COLUMN", ['cache' => true]);
+
+$topic_id = select("topicid", "*", null, null, "fetchAll", ['cache' => true]);
 $statusnote = false;
 foreach ($topic_id as $topic) {
-    if ($topic['report'] == "reportnight")
-        $reportnight = $topic['idreport'];
-    if ($topic['report'] == 'reporttest')
-        $reporttest = $topic['idreport'];
-    if ($topic['report'] == 'errorreport')
-        $errorreport = $topic['idreport'];
-    if ($topic['report'] == 'porsantreport')
-        $porsantreport = $topic['idreport'];
-    if ($topic['report'] == 'reportcron')
-        $reportcron = $topic['idreport'];
-    if ($topic['report'] == 'backupfile')
-        $reportbackup = $topic['idreport'];
-    if ($topic['report'] == 'buyreport')
-        $buyreport = $topic['idreport'];
-    if ($topic['report'] == 'otherservice')
-        $otherservice = $topic['idreport'];
-    if ($topic['report'] == 'paymentreport')
-        $paymentreports = $topic['idreport'];
-
+    if ($topic['report'] == "reportnight") $reportnight = $topic['idreport'];
+    if ($topic['report'] == 'reporttest') $reporttest = $topic['idreport'];
+    if ($topic['report'] == 'errorreport') $errorreport = $topic['idreport'];
+    if ($topic['report'] == 'porsantreport') $porsantreport = $topic['idreport'];
+    if ($topic['report'] == 'reportcron') $reportcron = $topic['idreport'];
+    if ($topic['report'] == 'backupfile') $reportbackup = $topic['idreport'];
+    if ($topic['report'] == 'buyreport') $buyreport = $topic['idreport'];
+    if ($topic['report'] == 'otherservice') $otherservice = $topic['idreport'];
+    if ($topic['report'] == 'paymentreport') $paymentreports = $topic['idreport'];
 }
-if ($setting['statusnamecustom'] == 'onnamecustom')
-    $statusnote = true;
-if ($setting['statusnoteforf'] == "0" && $user['agent'] == "f")
-    $statusnote = false;
+if ($setting['statusnamecustom'] == 'onnamecustom') $statusnote = true;
+if ($setting['statusnoteforf'] == "0" && $user['agent'] == "f") $statusnote = false;
 
-
-createForumTopicIfMissing($porsantreport, 'porsantreport', $textbotlang['Admin']['affiliates']['titletopic'], $setting['Channel_Report']);
-createForumTopicIfMissing($reportnight, 'reportnight', $textbotlang['Admin']['report']['reportnight'], $setting['Channel_Report']);
-createForumTopicIfMissing($reportcron, 'reportcron', $textbotlang['Admin']['report']['reportcron'], $setting['Channel_Report']);
-createForumTopicIfMissing($reportbackup, 'backupfile', "🤖 بکاپ ربات نماینده", $setting['Channel_Report']);
-foreach ($datatextbotget as $row) {
-    $datatxtbot[] = array(
-        'id_text' => $row['id_text'],
-        'text' => $row['text']
-    );
+if (!empty($setting['Channel_Report'])) {
+    createForumTopicIfMissing($porsantreport, 'porsantreport', $textbotlang['Admin']['affiliates']['titletopic'], $setting['Channel_Report']);
+    createForumTopicIfMissing($reportnight, 'reportnight', $textbotlang['Admin']['report']['reportnight'], $setting['Channel_Report']);
+    createForumTopicIfMissing($reportcron, 'reportcron', $textbotlang['Admin']['report']['reportcron'], $setting['Channel_Report']);
+    createForumTopicIfMissing($reportbackup, 'backupfile', "🤖 بکاپ ربات نماینده", $setting['Channel_Report']);
 }
+
+// Optimization: Datatextbot keys are initialized, values will be loaded in precheck.php if needed or mapped efficiently.
 $datatextbot = array(
-    'text_usertest' => '',
-    'text_Purchased_services' => '',
-    'text_support' => '',
-    'text_help' => '',
-    'text_start' => '',
-    'text_bot_off' => '',
-    'text_dec_info' => '',
-    'text_roll' => '',
-    'text_fq' => '',
-    'text_dec_fq' => '',
-    'text_sell' => '',
-    'text_Add_Balance' => '',
-    'text_channel' => '',
-    'text_Tariff_list' => '',
-    'text_dec_Tariff_list' => '',
-    'text_affiliates' => '',
-    'text_pishinvoice' => '',
-    'accountwallet' => '',
-    'textafterpay' => '',
-    'textaftertext' => '',
-    'textmanual' => '',
-    'textselectlocation' => '',
-    'crontest' => '',
-    'textrequestagent' => '',
-    'textpanelagent' => '',
-    'text_wheel_luck' => '',
-    'text_cart' => '',
-    'text_cart_auto' => '',
-    'textafterpayibsng' => '',
-    'text_request_agent_dec' => '',
-    'carttocart' => '',
-    'textnowpayment' => '',
-    'textnowpaymenttron' => '',
-    'iranpay1' => '',
-    'iranpay2' => '',
-    'iranpay3' => '',
-    'aqayepardakht' => '',
-    'zarinpey' => '',
-    'zarinpal' => '',
-    'textpaymentnotverify' => "",
-    'text_star_telegram' => '',
-    'text_extend' => '',
-    'text_wgdashboard' => '',
-    'text_Discount' => '',
+    'text_usertest' => '', 'text_Purchased_services' => '', 'text_support' => '', 'text_help' => '',
+    'text_start' => '', 'text_bot_off' => '', 'text_dec_info' => '', 'text_roll' => '',
+    'text_fq' => '', 'text_dec_fq' => '', 'text_sell' => '', 'text_Add_Balance' => '',
+    'text_channel' => '', 'text_Tariff_list' => '', 'text_dec_Tariff_list' => '', 'text_affiliates' => '',
+    'text_pishinvoice' => '', 'accountwallet' => '', 'textafterpay' => '', 'textaftertext' => '',
+    'textmanual' => '', 'textselectlocation' => '', 'crontest' => '', 'textrequestagent' => '',
+    'textpanelagent' => '', 'text_wheel_luck' => '', 'text_cart' => '', 'text_cart_auto' => '',
+    'textafterpayibsng' => '', 'text_request_agent_dec' => '', 'carttocart' => '', 'textnowpayment' => '',
+    'textnowpaymenttron' => '', 'iranpay1' => '', 'iranpay2' => '', 'iranpay3' => '',
+    'aqayepardakht' => '', 'zarinpey' => '', 'zarinpal' => '', 'textpaymentnotverify' => "",
+    'text_star_telegram' => '', 'text_extend' => '', 'text_wgdashboard' => '', 'text_Discount' => '',
 );

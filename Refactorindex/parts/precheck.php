@@ -1,10 +1,14 @@
 <?php
-rf_set_module('parts/prechecks_antispam_affiliate_rules_channels.php');
-foreach ($datatxtbot as $item) {
-    if (isset($datatextbot[$item['id_text']])) {
-        $datatextbot[$item['id_text']] = $item['text'];
+rf_set_module('parts/precheck.php');
+
+// Optimization: Single select instead of loop if possible, or just a more direct mapping.
+$datatextbotget = select("textbot", "id_text, text", null, null, "fetchAll", ['cache' => true]);
+foreach ($datatextbotget as $row) {
+    if (isset($datatextbot[$row['id_text']])) {
+        $datatextbot[$row['id_text']] = $row['text'];
     }
 }
+
 $time_Start = jdate('Y/m/d');
 $date_start = jdate('H:i:s', time());
 $time_string = "📆 $date_start → ⏰ $time_Start";
@@ -15,7 +19,9 @@ $varable_start = [
     '{time}' => $time_string,
     '{version}' => $version
 ];
-$datatextbot['text_start'] = strtr($datatextbot['text_start'], $varable_start);
+if (!empty($datatextbot['text_start'])) {
+    $datatextbot['text_start'] = strtr($datatextbot['text_start'], $varable_start);
+}
 $pendingUserUpdates = [];
 if ($user['username'] == "none" || $user['username'] == null || $user['username'] != $username) {
     $pendingUserUpdates['username'] = $username;
