@@ -81,7 +81,8 @@ if (!$rf_chain2_handled && ($user['step'] == "createusertest" || preg_match('/lo
     $username_ac = strtolower($username_ac);
     $DataUserOut = $ManagePanel->DataUser($marzban_list_get['name_panel'], $username_ac);
     $random_number = rand(1000000, 9999999);
-    if (isset($DataUserOut['username']) || in_array($username_ac, $usernameinvoice)) {
+    $usernameinvoice = select("invoice", "username", null, null, "FETCH_COLUMN", ['cache' => true]);
+    if (isset($DataUserOut['username']) || (is_array($usernameinvoice) && in_array($username_ac, $usernameinvoice))) {
         $username_ac = $random_number . "_" . $username_ac;
     }
     $datac = array(

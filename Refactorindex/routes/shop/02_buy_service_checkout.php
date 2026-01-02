@@ -68,7 +68,8 @@ if (!$rf_chain2_handled && ($user['step'] == "endstepuser" || $user['step'] == "
     $username_ac = strtolower($username_ac);
     $DataUserOut = $ManagePanel->DataUser($marzban_list_get['name_panel'], $username_ac);
     $random_number = rand(1000000, 9999999);
-    if (isset($DataUserOut['username']) || in_array($username_ac, $usernameinvoice)) {
+    $usernameinvoice = select("invoice", "username", null, null, "FETCH_COLUMN", ['cache' => true]);
+    if (isset($DataUserOut['username']) || (is_array($usernameinvoice) && in_array($username_ac, $usernameinvoice))) {
         $username_ac = $random_number . "_" . $username_ac;
     }
     if (isset($username_ac))
@@ -146,14 +147,16 @@ if (!$rf_chain2_handled && ($user['step'] == "payment" && $datain == "confirmand
     }
     $username_ac = strtolower($user['Processing_value_tow']);
     $DataUserOut = $ManagePanel->DataUser($marzban_list_get['name_panel'], $username_ac);
-    if (isset($DataUserOut['username']) || in_array($username_ac, $usernameinvoice)) {
+    $usernameinvoice = select("invoice", "username", null, null, "FETCH_COLUMN", ['cache' => true]);
+    if (isset($DataUserOut['username']) || (is_array($usernameinvoice) && in_array($username_ac, $usernameinvoice))) {
         sendmessage($from_id, "❌ لطفا مراحل خرید را مجددا انجام دهید", null, 'HTML');
         rf_stop();
     }
     $date = time();
     $randomString = bin2hex(random_bytes(4));
     $random_number = rand(1000000, 9999999);
-    if (in_array($randomString, $id_invoice)) {
+    $id_invoice = select("invoice", "id_invoice", null, null, "FETCH_COLUMN", ['cache' => true]);
+    if (is_array($id_invoice) && in_array($randomString, $id_invoice)) {
         $randomString = $random_number . $randomString;
     }
     if ($marzban_list_get['type'] == "Manualsale") {

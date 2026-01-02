@@ -99,12 +99,15 @@ if (!$rf_chain2_handled && ($user['step'] == "payments" && $datain == "confirman
     for ($i = 0; $i < $user['Processing_value_four']; $i++) {
         $random_number = rand(1000000, 9999999);
         $username_acc = $username_ac . "_" . $i;
+        $username_acc = $username_ac . "_" . $i;
         $get_username_Check = $ManagePanel->DataUser($marzban_list_get['name_panel'], $username_acc);
-        if (isset($get_username_Check['username']) || in_array($username_acc, $usernameinvoice)) {
+        $usernameinvoice = select("invoice", "username", null, null, "FETCH_COLUMN", ['cache' => true]);
+        if (isset($get_username_Check['username']) || (is_array($usernameinvoice) && in_array($username_acc, $usernameinvoice))) {
             $username_acc = $random_number . "_" . $username_acc;
         }
         $randomString = bin2hex(random_bytes(4));
-        if (in_array($randomString, $id_invoice)) {
+        $id_invoice = select("invoice", "id_invoice", null, null, "FETCH_COLUMN", ['cache' => true]);
+        if (is_array($id_invoice) && in_array($randomString, $id_invoice)) {
             $randomString = $random_number . $randomString;
         }
         $dataoutput = $ManagePanel->createUser($marzban_list_get['name_panel'], $info_product['code_product'], $username_acc, $datac);
